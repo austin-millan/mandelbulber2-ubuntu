@@ -33,5 +33,6 @@ RUN curl -s https://api.github.com/repos/buddhi1980/mandelbulber2/releases/lates
 RUN tar -xf /tmp/*.tar.gz -C .
 
 RUN cd mandelbulber2*/makefiles && qmake mandelbulber-opencl.pro && make all
+RUN cd mandelbulber2* && ./install
 
 CMD ["mandelbulber2"]
