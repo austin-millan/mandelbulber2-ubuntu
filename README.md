@@ -10,6 +10,6 @@ Run the program via CLI in client-mode for network rendering:
 docker run \
     --rm \
     --network=host \
-    -it aamillan/mandelbulber2-ubuntu:bionic \
-    bash -c "mandelbulber2 --nogui --host 192.168.1.12 --port 5555"
+    -it aamillan/mandelbulber2-ubuntu:master \
+    mandelbulber2 --nogui --host 192.168.1.12 --port 5555
 ```
