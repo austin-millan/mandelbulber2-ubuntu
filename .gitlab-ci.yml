@@ -1,7 +1,8 @@
 image: docker:dind
 
 stages:
-  - docker
+  - release
+  - latest
 variables:
   MANDELBULBER_VERSION: "2.25"
 
@@ -43,7 +44,7 @@ variables:
 #     paths:
 #       - $CI_PROJECT_NAME.tar.gz
 release:
-  stage: docker
+  stage: release
   image: docker:dind
   only:
     - master
@@ -62,10 +63,10 @@ release:
       - $CI_PROJECT_NAME.tar.gz
 
 latest:
-  stage: docker
+  stage: latest
   image: docker:dind
   dependencies:
-    - docker
+    - release
   services:
     - docker:dind
   only:
