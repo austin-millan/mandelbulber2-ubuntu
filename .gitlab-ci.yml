@@ -2,44 +2,60 @@ image: docker:dind
 
 stages:
   - docker
+variables:
+  MANDELBULBER_VERSION: "2.25"
 
-dockerize:
+# dockerize:
+#   stage: docker
+#   image: docker:dind
+#   only:
+#     - master
+#     - dev
+#   services:
+#     - docker:dind
+#   before_script:
+#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+#   script:
+#     - docker build --build-arg VERSION=${MANDELBULBER_VERSION} -t $CI_PROJECT_NAME .
+#     - docker save $CI_PROJECT_NAME:latest | gzip > $CI_PROJECT_NAME.tar.gz
+#     - docker tag $CI_PROJECT_NAME registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
+#     - docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
+#   artifacts:
+#     paths:
+#       - $CI_PROJECT_NAME.tar.gz
+
+# dockerize-and-tag:
+#   stage: docker
+#   image: docker:dind
+#   services:
+#     - docker:dind
+#   only:
+#     - branches
+#   before_script:
+#     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+#   script:
+#     - sed -i 's/\(version=\)\(.*\)/\1"'$CI_COMMIT_TAG'"/' Dockerfile
+#     - docker build -t $CI_PROJECT_NAME .
+#     - docker save $CI_PROJECT_NAME:latest | gzip > $CI_PROJECT_NAME.tar.gz
+#     - docker tag $CI_PROJECT_NAME registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
+#     - docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
+#   artifacts:
+#     paths:
+#       - $CI_PROJECT_NAME.tar.gz
+release:
   stage: docker
   image: docker:dind
   only:
     - master
-    - dev
   services:
     - docker:dind
-  except:
-    - tags
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
   script:
-    - docker build -t $CI_PROJECT_NAME .
-    - docker save $CI_PROJECT_NAME:latest | gzip > $CI_PROJECT_NAME.tar.gz
-    - docker tag $CI_PROJECT_NAME registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
-    - docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
+    - docker build --build-arg VERSION=${MANDELBULBER_VERSION} -t $CI_PROJECT_NAME .
+    - docker save $CI_PROJECT_NAME:${MANDELBULBER_VERSION} | gzip > $CI_PROJECT_NAME.tar.gz
+    - docker tag $CI_PROJECT_NAME registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${MANDELBULBER_VERSION}
+    - docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${MANDELBULBER_VERSION}
   artifacts:
     paths:
       - $CI_PROJECT_NAME.tar.gz
-
-dockerize-and-tag:
-  stage: docker
-  image: docker:dind
-  services:
-    - docker:dind
-  only:
-    - tags
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-  script:
-    - sed -i 's/\(version=\)\(.*\)/\1"'$CI_COMMIT_TAG'"/' Dockerfile
-    - docker build -t $CI_PROJECT_NAME .
-    - docker save $CI_PROJECT_NAME:latest | gzip > $CI_PROJECT_NAME.tar.gz
-    - docker tag $CI_PROJECT_NAME registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
-    - docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:$CI_COMMIT_REF_NAME
-  artifacts:
-    paths:
-      - $CI_PROJECT_NAME.tar.gz
-

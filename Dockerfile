@@ -32,7 +32,6 @@ RUN useradd -ms /bin/bash user
 RUN mkdir /home/user/mandelbulber2
 WORKDIR /home/user/mandelbulber2
 ARG VERSION="2.24"
-ENV VERSION="2.24"
 RUN echo $VERSION; export DOWNLOAD_URL=$(curl https://api.github.com/repos/buddhi1980/mandelbulber2/releases | jq -r -c ".[] | select (.[\"tag_name\"] != \"continuous\") | select( .[\"tag_name\"] | contains(\"${VERSION}\")) | .assets[] | select (.content_type | contains(\"application/gzip\")) | .[\"browser_download_url\"]"); echo ${DOWNLOAD_URL}; wget -O /tmp/mandelbulber.tar.gz ${DOWNLOAD_URL}
 RUN tar -xf /tmp/*.tar.gz -C .
 RUN cd mandelbulber2*/makefiles && qmake mandelbulber-opencl.pro && make all
