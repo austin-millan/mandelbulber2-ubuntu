@@ -65,7 +65,7 @@ latest:
   stage: docker
   image: docker:dind
   dependencies:
-    - release
+    - docker
   services:
     - docker:dind
   only:
