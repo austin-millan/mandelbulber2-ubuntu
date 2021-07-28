@@ -5,7 +5,8 @@ stages:
   - latest
 variables:
   MANDELBULBER_VERSION: "2.25"
-
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
 # dockerize:
 #   stage: docker
 #   image: docker:dind
@@ -52,19 +53,18 @@ release:
     - schedules
   services:
     - docker:dind
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
   script:
     - docker build --build-arg VERSION=${MANDELBULBER_VERSION} -t $CI_PROJECT_NAME:${MANDELBULBER_VERSION} .
     - docker save $CI_PROJECT_NAME:${MANDELBULBER_VERSION} | gzip > $CI_PROJECT_NAME.tar.gz
     - docker tag $CI_PROJECT_NAME:${MANDELBULBER_VERSION} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${MANDELBULBER_VERSION}
     - docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${MANDELBULBER_VERSION}
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
+    - docker tag $CI_PROJECT_NAME:${MANDELBULBER_VERSION} $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
+    - docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
 
 latest-gitlab:
   stage: latest
   image: docker:dind
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
   dependencies:
     - release
   services:
@@ -88,7 +88,6 @@ latest-dockerhub:
     - master
     - schedules
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
     - docker pull $CI_REGISTRY_IMAGE:latest
     - docker tag $CI_REGISTRY_IMAGE $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
