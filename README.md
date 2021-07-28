@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/mandelbulber/mandelbulber2-ubuntu/badges/master/pipeline.svg)](https://gitlab.com/mandelbulber/mandelbulber2-ubuntu/commits/master)
+
 # mandelbulber2-ubuntu
 
 Run [Mandelbulber](https://www.mandelbulber.com/) in a docker container.
@@ -13,7 +15,3 @@ docker run \
     -it aamillan/mandelbulber2-ubuntu:master \
     mandelbulber2 --nogui --host 192.168.1.12 --port 5555
 ```
-
-## Repository Views
-
-[![HitCount](http://hits.dwyl.com/austin-millan/mandelbulber2-ubuntu.svg)](http://hits.dwyl.com/austin-millan/mandelbulber2-ubuntu)
