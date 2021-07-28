@@ -47,6 +47,7 @@ release:
   image: docker:dind
   only:
     - master
+    - schedules
   services:
     - docker:dind
   before_script:
