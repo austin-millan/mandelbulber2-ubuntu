@@ -14,9 +14,8 @@ If you are interested in running the latest mandelbuler2 in a container but regi
 You can build a specific version of mandelbulber2 by setting the build argument `VERSION` when building the image locally, e.g.:
 
 ```bash
-git clone git@gitlab.com:mandelbulber/mandelbulber2-ubuntu.git && cd mandelbulber2-ubuntu
-
-NEW_RELEASE=X.Y; docker build --build-arg VERSION=$NEW_RELEASE -t austin-millan/mandelbulber2:$NEW_RELEASE
+$ git clone git@gitlab.com:mandelbulber/mandelbulber2-ubuntu.git && cd mandelbulber2-ubuntu
+$ NEW_RELEASE=X.Y; docker build --build-arg VERSION=$NEW_RELEASE -t austin-millan/mandelbulber2:$NEW_RELEASE
 ```
 
 ## Examples
