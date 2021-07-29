@@ -7,7 +7,7 @@
 Run [Mandelbulber](https://www.mandelbulber.com/) in a docker container.
 
 Note that docker registries may not have the latest version.
-If you are interested in running the latest mandelbuler2 in a container but registries are outdated, see [Build](Build).
+If you are interested in running the latest mandelbuler2 in a container but registries are outdated, see [Build](#Build).
 
 ## Build
 
