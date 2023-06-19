@@ -8,8 +8,6 @@ LABEL org.label-schema.docker.cmd='docker run -e USER_UID=${id} -it --net=host -
 LABEL org.label-schema.docker.cmd.help="docker run -e USER_UID=${id} -it --entrypoint="mandelbulber2" registry.gitlab.com/mandelbulber/mandelbulber2-ubuntu:2.25 --help"
 LABEL org.label-schema.docker.build='docker build --build-arg VERSION=2.25 -t austin-millan/mandelbulber2:local .'
 
-
-
 RUN apt-get update && apt-get install --no-install-recommends -y \
     curl \
     wget \
@@ -39,7 +37,7 @@ ARG VERSION="2.25"
 RUN useradd -ms /bin/bash user
 RUN mkdir /home/user/mandelbulber2
 WORKDIR /home/user/mandelbulber2
-RUN echo $VERSION; export DOWNLOAD_URL=$(curl https://api.github.com/repos/buddhi1980/mandelbulber2/releases | jq -r -c ".[] | select (.[\"tag_name\"] != \"continuous\") | select( .[\"tag_name\"] | contains(\"${VERSION}\")) | .assets[] | select (.content_type | contains(\"application/gzip\")) | .[\"browser_download_url\"]"); echo ${DOWNLOAD_URL}; wget -O /tmp/mandelbulber.tar.gz ${DOWNLOAD_URL}
+RUN wget -O /tmp/mandelbulber.tar.gz https://api.github.com/repos/buddhi1980/mandelbulber2/tarball/${VERSION}
 RUN tar -xf /tmp/*.tar.gz -C .
 RUN cd mandelbulber2*/makefiles && qmake mandelbulber-opencl.pro && make all
 RUN cd mandelbulber2* && ./install
