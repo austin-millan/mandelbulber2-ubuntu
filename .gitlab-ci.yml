@@ -17,7 +17,8 @@ release:
   services:
     - docker:dind
   script:
-    - for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
+    - |
+      for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
         docker build --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:${tag} .
         docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
         docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
