@@ -6,6 +6,7 @@ stages:
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  - apk add jq
 
 release:
   stage: release
@@ -16,41 +17,43 @@ release:
   services:
     - docker:dind
   script:
-    - docker build --build-arg VERSION=${MANDELBULBER_VERSION} -t $CI_PROJECT_NAME:${MANDELBULBER_VERSION} .
-    - docker save $CI_PROJECT_NAME:${MANDELBULBER_VERSION} | gzip > $CI_PROJECT_NAME.tar.gz
-    - docker tag $CI_PROJECT_NAME:${MANDELBULBER_VERSION} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${MANDELBULBER_VERSION}
-    - docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${MANDELBULBER_VERSION}
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
-    - docker tag $CI_PROJECT_NAME:${MANDELBULBER_VERSION} $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
-    - docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
+    - for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
+        docker build --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:${tag} .
+        docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
+        docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
+      done
+    #    docker save $CI_PROJECT_NAME:${tag} | gzip > $CI_PROJECT_NAME.tar.gz
+    # - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
+    # - docker tag $CI_PROJECT_NAME:${MANDELBULBER_VERSION} $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
+    # - docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
 
-latest-gitlab:
-  stage: latest
-  image: docker:dind
-  dependencies:
-    - release
-  services:
-    - docker:dind
-  only:
-    - master
-    - schedules
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:latest
-    - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:latest
+# latest-gitlab:
+#   stage: latest
+#   image: docker:dind
+#   dependencies:
+#     - release
+#   services:
+#     - docker:dind
+#   only:
+#     - master
+#     - schedules
+#   script:
+#     - docker pull $CI_REGISTRY_IMAGE:latest
+#     - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:latest
+#     - docker push $CI_REGISTRY_IMAGE:latest
 
-latest-dockerhub:
-  stage: latest
-  image: docker:dind
-  dependencies:
-    - release
-  services:
-    - docker:dind
-  only:
-    - master
-    - schedules
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:latest
-    - docker tag $CI_REGISTRY_IMAGE $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
-    - docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
+# latest-dockerhub:
+#   stage: latest
+#   image: docker:dind
+#   dependencies:
+#     - release
+#   services:
+#     - docker:dind
+#   only:
+#     - master
+#     - schedules
+#   script:
+#     - docker pull $CI_REGISTRY_IMAGE:latest
+#     - docker tag $CI_REGISTRY_IMAGE $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
+#     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
+#     - docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
