@@ -21,10 +21,10 @@ release:
     - |
       count=0
       for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
-          if [ "$tag" = "continuous" ]; then
+          if [ "$tag" = "continuous" ] || [[ "$tag" == *"alpha"* ]]; then
               continue
           fi
-          if [ $count -ge 5 ]; then
+          if [ $count -ge 20 ]; then
               break
           fi
           echo "building version: $tag"
