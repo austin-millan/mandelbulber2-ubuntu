@@ -30,7 +30,7 @@ release:
           echo "building version: $tag"
           if [ "$count" -eq 0 ]; then
               echo "latest: $tag"
-              docker build --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:latest . 
+              docker build --cache-from registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:latest . 
               docker tag $CI_PROJECT_NAME:latest registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
               docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
               docker tag $CI_PROJECT_NAME:latest $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
