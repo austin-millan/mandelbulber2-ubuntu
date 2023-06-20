@@ -17,12 +17,13 @@ release:
   services:
     - docker:dind
   script:
-    - |
-      for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
-        docker build --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:${tag} .
-        docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
-        docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
-      done
+    - ./release.sh
+    # - |
+    #   for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
+    #     docker build --cache-from $CI_PROJECT_NAME:${tag} --build-arg VERSION=${tag} --tag $CI_PROJECT_NAME:${tag} .
+    #     docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
+    #     docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
+    #   done
     #    docker save $CI_PROJECT_NAME:${tag} | gzip > $CI_PROJECT_NAME.tar.gz
     # - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
     # - docker tag $CI_PROJECT_NAME:${MANDELBULBER_VERSION} $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
