@@ -11,13 +11,14 @@ for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/rele
     echo "building version: $tag"
     if [ "$count" -eq 0 ]; then
         echo "latest: $tag"
-        docker build --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:latest . 
-        docker tag $CI_PROJECT_NAME:latest registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
-        docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
+        docker build --build-arg VERSION=${tag} -t abc:latest . 
+        #docker build --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:latest . 
+        #docker tag $CI_PROJECT_NAME:latest registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
+        #docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
     fi
-    docker build --from-cache registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag} --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:${tag} .
-    docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
-    docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
+    #docker build --from-cache registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag} --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:${tag} .
+    #docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
+    #docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
     count=$((count+1))
 done
 
