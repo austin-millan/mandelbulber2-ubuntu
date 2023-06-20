@@ -17,6 +17,7 @@ release:
   services:
     - docker:dind
   script:
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
     - |
       count=0
       for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
@@ -32,10 +33,14 @@ release:
               docker build --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:latest . 
               docker tag $CI_PROJECT_NAME:latest registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
               docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
+              docker tag $CI_PROJECT_NAME:${latest} $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
+              docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
           fi
           docker build --cache-from registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag} --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:${tag} .
           docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
           docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
+          docker tag $CI_PROJECT_NAME:${tag} $DOCKERHUB_USER/$CI_PROJECT_NAME:${tag}
+          docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:${tag}
           count=$((count+1))
       done
 
