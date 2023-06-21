@@ -14,8 +14,8 @@ release:
   only:
     - master
     - schedules
-  # services:
-  #   - docker:dind
+  services:
+    - docker:dind
   script:
     - printenv
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
