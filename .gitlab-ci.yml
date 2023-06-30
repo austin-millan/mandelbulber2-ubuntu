@@ -25,7 +25,7 @@ release:
           if [ "$tag" = "continuous" ] || [[ "$tag" == *"alpha"* ]]; then
               continue
           fi
-          if [ $count -ge 3 ]; then
+          if [ $count -ge $LOOKBACK ]; then
               break
           fi
           echo "building version: $tag"
