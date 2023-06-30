@@ -17,7 +17,6 @@ release:
   services:
     - docker:dind
   script:
-    - printenv
     - export DOCKER_HOST=tcp://127.0.0.1:2375
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
     - |
@@ -26,7 +25,7 @@ release:
           if [ "$tag" = "continuous" ] || [[ "$tag" == *"alpha"* ]]; then
               continue
           fi
-          if [ $count -ge 20 ]; then
+          if [ $count -ge 3 ]; then
               break
           fi
           echo "building version: $tag"
