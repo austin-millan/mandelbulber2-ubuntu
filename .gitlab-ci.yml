@@ -17,7 +17,6 @@ release:
   services:
     - docker:dind
   script:
-    - export DOCKER_HOST=tcp://127.0.0.1:2375
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
     - |
       count=0
