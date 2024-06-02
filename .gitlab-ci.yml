@@ -14,9 +14,7 @@ release:
   #services:
   #  - docker:dind
   before_script:
-    - apk add jq
-    - apk add curl
-    - apk add bash
+    - apk add jq curl bash
   script:
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
     - chmod +x release.sh

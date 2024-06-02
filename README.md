@@ -25,7 +25,7 @@ $ NEW_RELEASE=X.Y; docker build --build-arg VERSION=$NEW_RELEASE -t austin-milla
 <details>
   <summary>Expand for Usage</summary>
 
-```bashh
+```bash
 $ docker run -e USER_UID=${id} -it --entrypoint="mandelbulber2" registry.gitlab.com/mandelbulber/mandelbulber2-ubuntu:2.25 --help
 Detected 12 CPUs
 Mandelbulber 2.25
@@ -116,6 +116,7 @@ settings_file          file with fractal settings (program also tries
 Run as `client`:
 
 ```bash
+xhost+
 docker run \
     -e USER_UID=${id} \
     -it \
@@ -130,6 +131,7 @@ docker run \
 Run as `server`:
 
 ```bash
+xhost+
 docker run \
     -e USER_UID=${id} \
     -it \
