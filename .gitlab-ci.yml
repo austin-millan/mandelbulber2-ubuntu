@@ -3,12 +3,8 @@ image: docker:dind
 stages:
   - release
   - latest
-
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
-  # - apk add jq curl
-
-  #tags=$(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name')
 release:
   stage: release
   image: docker:dind
@@ -23,76 +19,5 @@ release:
     - apk add bash
   script:
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
-    - chmod +x release2.sh
-    - bash ./release2.sh
-    # - |
-    #   tags=`curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'`
-    #   readarray -t tag_array <<<"$tags"
-    #   end_index=7
-    #   start_index=$((end_index - $LOOKBACK))
-    #   start_index=$((start_index < 0 ? 0 : start_index))
-    #   for (( idx=end_index; idx>=start_index; idx-- )); do
-    #       tag="${tag_array[idx]}"
-    #       if [ "$tag" = "continuous" ] || [[ "$tag" == *"alpha"* ]]; then
-    #           continue
-    #       fi
-    #       if [ $count -ge $LOOKBACK ]; then
-    #           break
-    #       fi
-    #       echo "building version: $tag"
-    #       docker build --cache-from registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag} --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:${tag} .
-    #       docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
-    #       docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
-    #       docker tag $CI_PROJECT_NAME:${tag} $DOCKERHUB_USER/$CI_PROJECT_NAME:${tag}
-    #       docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:${tag}
-    #       if [ "$idx" -eq 1 ]; then
-    #           echo "latest: $tag"
-    #           docker build --cache-from registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest --build-arg VERSION=${tag} -t $CI_PROJECT_NAME:latest . 
-    #           docker tag $CI_PROJECT_NAME:latest registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
-    #           docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:latest
-    #           docker tag $CI_PROJECT_NAME:latest $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
-    #           docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
-    #       fi
-    #   done
-
-    # - |
-    #   for tag in $(curl -s "https://api.github.com/repos/buddhi1980/mandelbulber2/releases" | jq -r '.[].tag_name'); do
-    #     docker build --cache-from $CI_PROJECT_NAME:${tag} --build-arg VERSION=${tag} --tag $CI_PROJECT_NAME:${tag} .
-    #     docker tag $CI_PROJECT_NAME:${tag} registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
-    #     docker push registry.gitlab.com/mandelbulber/$CI_PROJECT_NAME:${tag}
-    #   done
-    #    docker save $CI_PROJECT_NAME:${tag} | gzip > $CI_PROJECT_NAME.tar.gz
-    # - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
-    # - docker tag $CI_PROJECT_NAME:${MANDELBULBER_VERSION} $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
-    # - docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
-
-# latest-gitlab:
-#   stage: latest
-#   image: docker:dind
-#   dependencies:
-#     - release
-#   services:
-#     - docker:dind
-#   only:
-#     - master
-#     - schedules
-#   script:
-#     - docker pull $CI_REGISTRY_IMAGE:latest
-#     - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:latest
-#     - docker push $CI_REGISTRY_IMAGE:latest
-
-# latest-dockerhub:
-#   stage: latest
-#   image: docker:dind
-#   dependencies:
-#     - release
-#   services:
-#     - docker:dind
-#   only:
-#     - master
-#     - schedules
-#   script:
-#     - docker pull $CI_REGISTRY_IMAGE:latest
-#     - docker tag $CI_REGISTRY_IMAGE $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
-#     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
-#     - docker push $DOCKERHUB_USER/$CI_PROJECT_NAME:latest
+    - chmod +x release.sh
+    - bash ./release.sh
