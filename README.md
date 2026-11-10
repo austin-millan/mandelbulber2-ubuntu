@@ -18,6 +18,20 @@ $ git clone git@gitlab.com:mandelbulber/mandelbulber2-ubuntu.git && cd mandelbul
 $ NEW_RELEASE=X.Y; docker build --build-arg VERSION=$NEW_RELEASE -t austin-millan/mandelbulber2:$NEW_RELEASE
 ```
 
+## Scheduled releases
+
+On `master` and scheduled pipelines, `release.sh` compares GitHub releases for
+`buddhi1980/mandelbulber2` with existing Docker Hub tags for
+`$DOCKERHUB_USER/$CI_PROJECT_NAME`, builds only missing version tags, and points
+`latest` at the newest eligible stable release.
+
+Optional CI variables:
+
+- `LOOKBACK` - max number of missing version tags to build per run (newest
+  first). Default is unlimited. The newest eligible release is still built when
+  needed so `latest` stays current.
+- `DRY_RUN=1` - log skip/build/`latest` decisions without building or pushing.
+
 ## Examples
 
 ### Usage
