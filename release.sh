@@ -31,10 +31,27 @@ DH_API="https://hub.docker.com/v2/repositories/${DOCKERHUB_REPO}/tags"
 
 BUILT_TAGS=()
 
+# Dockerfile builds on Ubuntu 24.04 + Qt6. GitHub release tarballs from 2.33
+# onward ship Qt6 UIC headers (QtGui/QAction). Tags at or below 2.32 still ship
+# Qt5 UIC headers and cannot be built by this image.
+MIN_QT6_MAJOR=2
+MIN_QT6_MINOR=33
+
 is_buildable_tag() {
   local tag="$1"
   # Keep version tags like 2.34 or 2.31-1; drop continuous/alpha/dev junk.
   [[ "$tag" =~ ^[0-9]+\.[0-9]+(-[0-9]+)?$ ]]
+}
+
+is_qt6_era_tag() {
+  local tag="$1"
+  local major minor
+  major="${tag%%.*}"
+  minor="${tag#*.}"
+  minor="${minor%%-*}"
+  [[ "$major" =~ ^[0-9]+$ && "$minor" =~ ^[0-9]+$ ]] || return 1
+  # Force base-10 so tags like 2.09 are not parsed as invalid octal.
+  (( 10#$major > MIN_QT6_MAJOR )) || (( 10#$major == MIN_QT6_MAJOR && 10#$minor >= MIN_QT6_MINOR ))
 }
 
 fetch_github_releases() {
@@ -171,10 +188,12 @@ mapfile -t ELIGIBLE_TAGS < <(
     | select(.prerelease == false)
     | .tag_name
   ' | while IFS= read -r tag; do
-    if is_buildable_tag "$tag"; then
-      echo "$tag"
-    else
+    if ! is_buildable_tag "$tag"; then
       echo "SKIP ineligible GitHub tag: ${tag}" >&2
+    elif ! is_qt6_era_tag "$tag"; then
+      echo "SKIP pre-Qt6 release (needs Ubuntu 18.04+Qt5 image, not this Dockerfile): ${tag}" >&2
+    else
+      echo "$tag"
     fi
   done
 )
