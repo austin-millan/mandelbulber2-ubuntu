@@ -11,19 +11,26 @@ If you are interested in running the latest mandelbuler2 in a container but regi
 
 ## Build
 
-You can build a specific version of mandelbulber2 by setting the build argument `VERSION` when building the image locally, e.g.:
+The Dockerfile targets **Ubuntu 24.04 + Qt 6** (`qmake6`), matching upstream
+`buddhi1980/mandelbulber2` compile packages from release **2.33** onward.
+Those GitHub release tarballs ship Qt6-generated `ui_*.h` headers
+(`#include <QtGui/QAction>`). Tags **2.32 and older** still ship Qt5 UIC
+headers and are **not** buildable with this image; `release.sh` skips them.
+
+You can build a specific Qt6-era version by setting the build argument
+`VERSION` when building the image locally, e.g.:
 
 ```bash
 $ git clone git@gitlab.com:mandelbulber/mandelbulber2-ubuntu.git && cd mandelbulber2-ubuntu
-$ NEW_RELEASE=X.Y; docker build --build-arg VERSION=$NEW_RELEASE -t austin-millan/mandelbulber2:$NEW_RELEASE
+$ NEW_RELEASE=2.34; docker build --no-cache --build-arg VERSION=$NEW_RELEASE -t austin-millan/mandelbulber2:$NEW_RELEASE .
 ```
 
 ## Scheduled releases
 
 On `master` and scheduled pipelines, `release.sh` compares GitHub releases for
 `buddhi1980/mandelbulber2` with existing Docker Hub tags for
-`$DOCKERHUB_USER/$CI_PROJECT_NAME`, builds only missing version tags, and points
-`latest` at the newest eligible stable release.
+`$DOCKERHUB_USER/$CI_PROJECT_NAME`, builds only missing **Qt6-era** version
+tags (2.33+), and points `latest` at the newest eligible stable release.
 
 Optional CI variables:
 
