@@ -4,7 +4,7 @@ stages:
   - release
   - latest
 before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 release:
   stage: release
   image: docker:dind
@@ -15,7 +15,10 @@ release:
   #  - docker:dind
   before_script:
     - apk add jq curl bash
-  script:
+    # Job-level before_script replaces the top-level one; login here so both
+    # registries are authenticated before release.sh dual-pushes.
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_SECRET
+  script:
     - chmod +x release.sh
     - bash ./release.sh
